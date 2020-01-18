@@ -1,0 +1,22 @@
+version: '3'
+services: 
+  postgres:
+    image: "postgres:latest"
+    environment: 
+      POSTGRES_DB: books-generic
+  books-generic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:      
+      - ./:/app
+    ports: 
+      - "9000:9000"
+    environment: 
+      - PGUSER=postgres
+      - PGHOST=postgres 
+      - PGDATABASE=books-generic
+      - PGPASSWORD=postgres 
+      - PGPORT=5432
+    restart: on-failure
+    
