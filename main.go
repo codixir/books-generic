@@ -7,8 +7,9 @@ import (
 
 	app "github.com/codixir/books-generic/internal/app"
 	booksApi "github.com/codixir/books-generic/internal/book/api"
-	"github.com/codixir/books-generic/internal/book/db"
+	db1 "github.com/codixir/books-generic/internal/book/db"
 	usersApi "github.com/codixir/books-generic/internal/user/api"
+	db2 "github.com/codixir/books-generic/internal/user/db"
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
 )
@@ -19,17 +20,24 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	conn, err := db.CreateDBConnection()
+	conn1, err := db1.CreateBooksDbConnection()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db := db.NewDB(conn)
+	booksDb := db1.NewDB(conn1)
+
+	conn2, err := db2.CreateUsersDbConnection()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	usersDb := db2.NewDB(conn2)
 
 	application := app.NewApplication()
 
-	booksApi.NewApp(db, application)
-	usersApi.NewApp(db, application)
+	booksApi.NewApp(booksDb, application)
+	usersApi.NewApp(usersDb, application)
 
 	server := http.Server{
 		Addr:    ":9000",

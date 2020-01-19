@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	app "github.com/codixir/books-generic/internal/app"
-	"github.com/codixir/books-generic/internal/book/db"
 	"github.com/codixir/books-generic/internal/model"
+	"github.com/codixir/books-generic/internal/user/db"
 
 	"github.com/gorilla/mux"
 )
@@ -13,11 +13,11 @@ import (
 type (
 	App struct {
 		*mux.Router
-		db db.BooksDB
+		db db.UsersDB
 	}
 )
 
-func NewApp(db db.BooksDB, application *app.Application) *App {
+func NewApp(db db.UsersDB, application *app.Application) *App {
 	app := App{
 		Router: application.Router,
 		db:     db,

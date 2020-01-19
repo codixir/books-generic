@@ -1,8 +1,10 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
+	utils "github.com/codixir/books-generic/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -20,16 +22,13 @@ func NewApplication() *Application {
 	}
 
 	applicationRouter.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
-
 	applicationRouter.HandleFunc("/app", ApplicationHandler).Methods("GET")
 
 	return &application
 }
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("Not found..."))
+	utils.RespondWithError(fmt.Errorf("Not Found"), http.StatusNotFound, w)
 }
 
 func ApplicationHandler(w http.ResponseWriter, r *http.Request) {

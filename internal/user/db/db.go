@@ -4,18 +4,23 @@ import (
 	"fmt"
 
 	"github.com/codixir/books-generic/config"
-	"github.com/codixir/books-generic/internal/model"
 
 	"database/sql"
 
 	_ "github.com/lib/pq"
 )
 
+const dbPrefix = "USERS_"
+
 type (
 	DB struct {
 		db *sql.DB
 	}
 
+	UsersDB interface {
+		Ping() error
+		// GetUser() (model.User, error)
+	}
 )
 
 func NewDB(db *sql.DB) *DB {
@@ -26,15 +31,7 @@ func NewDB(db *sql.DB) *DB {
 	return &psqlDB
 }
 
-func CreateDBConnection(dbName string) (*sql.DB, error) {
-	if dbName == "books" {
-		dbPrefix = "BOOKS_"
-	}
-
-	if dbName == "users" {
-		dbPrefix = "USERS_"
-	}
-
+func CreateUsersDbConnection() (*sql.DB, error) {
 	Global := config.SetConfig(dbPrefix)
 
 	source := fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s sslmode=disable",
@@ -52,4 +49,7 @@ func CreateDBConnection(dbName string) (*sql.DB, error) {
 
 	return d, nil
 }
+
+func (p *DB) Ping() error {
+	return p.db.Ping()
 }

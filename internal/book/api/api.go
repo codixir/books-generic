@@ -12,6 +12,7 @@ import (
 	app "github.com/codixir/books-generic/internal/app"
 	"github.com/codixir/books-generic/internal/book/db"
 	"github.com/codixir/books-generic/internal/model"
+	utils "github.com/codixir/books-generic/utils"
 
 	"github.com/gorilla/mux"
 )
@@ -89,7 +90,7 @@ func (app *App) GetBooks(w http.ResponseWriter, r *http.Request) {
 
 	books, err := app.db.GetBooks(pg)
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		utils.RespondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
 
@@ -98,7 +99,7 @@ func (app *App) GetBooks(w http.ResponseWriter, r *http.Request) {
 		Pagination: &pg,
 	}
 
-	respondWithSuccess(res, w)
+	utils.RespondWithSuccess(res, w)
 }
 
 func (app *App) GetBook(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +107,7 @@ func (app *App) GetBook(w http.ResponseWriter, r *http.Request) {
 	id := params["id"]
 	book, err := app.db.GetBook(id)
 	if err != nil {
-		respondWithError(err, http.StatusNotFound, w)
+		utils.RespondWithError(err, http.StatusNotFound, w)
 		return
 	}
 
@@ -116,7 +117,7 @@ func (app *App) GetBook(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	respondWithSuccess(res, w)
+	utils.RespondWithSuccess(res, w)
 }
 
 func (app *App) CreateBook(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +128,7 @@ func (app *App) CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	if book.Title == "" {
 		err := errors.New("failed to create book")
-		respondWithError(err, http.StatusBadRequest, w)
+		utils.RespondWithError(err, http.StatusBadRequest, w)
 		return
 	}
 
@@ -138,7 +139,7 @@ func (app *App) CreateBook(w http.ResponseWriter, r *http.Request) {
 	result, err := app.db.CreateBook(book)
 
 	if err != nil {
-		respondWithError(err, http.StatusInternalServerError, w)
+		utils.RespondWithError(err, http.StatusInternalServerError, w)
 		return
 	}
 
@@ -149,28 +150,5 @@ func (app *App) CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	respondWithSuccess(res, w)
-}
-
-func respondWithError(err error, statusCode int, w http.ResponseWriter) string {
-	body := model.ErrorBody{
-		Error:  err.Error(),
-		Status: statusCode,
-	}
-
-	content, _ := json.Marshal(body)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	w.Write(content)
-	return string(content)
-}
-
-func respondWithSuccess(response interface{}, w http.ResponseWriter) string {
-	content, _ := json.Marshal(response)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(content)
-
-	return string(content)
+	utils.RespondWithSuccess(res, w)
 }

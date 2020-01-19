@@ -28,12 +28,6 @@ type (
 		TotalRecords int `json:"totalRecords"`
 	}
 
-	//The error model
-	ErrorBody struct {
-		Error  string `json:"error"`
-		Status int    `json:"status"`
-	}
-
 	//The item model
 	Item struct {
 		Value interface{} `json:"value"`

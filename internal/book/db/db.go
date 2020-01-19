@@ -36,7 +36,7 @@ func NewDB(db *sql.DB) *DB {
 	return &psqlDB
 }
 
-func CreateDBConnection() (*sql.DB, error) {
+func CreateBooksDbConnection() (*sql.DB, error) {
 	Global := config.SetConfig(dbPrefix)
 
 	source := fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s sslmode=disable",
